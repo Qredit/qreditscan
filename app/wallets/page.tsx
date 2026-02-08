@@ -32,9 +32,8 @@ export default async function WalletsPage({
             <thead className="bg-dark-hover/30">
               <tr>
                 <th className="table-header w-16">#</th>
-                <th className="table-header">Address</th>
+                <th className="table-header">Name / Address</th>
                 <th className="table-header text-right">Balance</th>
-                <th className="table-header text-center hidden sm:table-cell">Delegate</th>
                 <th className="table-header text-center hidden md:table-cell">Voting</th>
               </tr>
             </thead>
@@ -44,21 +43,20 @@ export default async function WalletsPage({
                   <td className="table-cell text-muted font-mono text-sm">
                     {(page - 1) * 25 + idx + 1}
                   </td>
-                  <td className="table-cell font-mono text-sm">
+                  <td className="table-cell">
                     <Link href={`/wallets/${wallet.address}`} className="link">
-                      <span className="hidden lg:inline">{wallet.address}</span>
-                      <span className="lg:hidden">{truncateHash(wallet.address, 10, 8)}</span>
+                      {wallet.isDelegate && wallet.username ? (
+                        <span className="font-medium">{wallet.username}</span>
+                      ) : (
+                        <span className="font-mono text-sm">
+                          <span className="hidden lg:inline">{wallet.address}</span>
+                          <span className="lg:hidden">{truncateHash(wallet.address, 10, 8)}</span>
+                        </span>
+                      )}
                     </Link>
                   </td>
                   <td className="table-cell text-right font-mono">
                     {formatXQRWhole(wallet.balance)} XQR
-                  </td>
-                  <td className="table-cell text-center hidden sm:table-cell">
-                    {wallet.isDelegate ? (
-                      <span className="badge-primary">{wallet.username || "Yes"}</span>
-                    ) : (
-                      <span className="text-muted">—</span>
-                    )}
                   </td>
                   <td className="table-cell text-center hidden md:table-cell">
                     {wallet.vote ? (

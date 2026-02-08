@@ -38,13 +38,11 @@ export default async function DelegatesPage() {
         </div>
         <div className="stat-tile">
           <div className="stat-label">Online</div>
-          <div className="stat-value text-success">{onlineCount}</div>
-          <div className="stat-sub">of {active.length} active</div>
+          <div className="stat-value text-success">{onlineCount}/{active.length}</div>
         </div>
         <div className="stat-tile">
           <div className="stat-label">Offline</div>
-          <div className="stat-value text-error">{active.length - onlineCount}</div>
-          <div className="stat-sub">no block in 15m</div>
+          <div className="stat-value text-error">{active.length - onlineCount}/{active.length}</div>
         </div>
         <div className="stat-tile">
           <div className="stat-label">Standby</div>
