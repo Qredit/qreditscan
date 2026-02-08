@@ -46,6 +46,33 @@ npm start
 
 The app builds to a standalone output — deploy anywhere that runs Node.js.
 
+### PM2 (Recommended for Production)
+
+```bash
+# Install PM2 globally
+npm install -g pm2
+
+# Build the app
+npm run build
+
+# Start with PM2
+pm2 start npm --name "qreditscan" -- start
+
+# Or with a custom port / API URL
+PORT=8080 NEXT_PUBLIC_API_URL=http://your-node:5103/api/v2 pm2 start npm --name "qreditscan" -- start
+
+# Useful PM2 commands
+pm2 status              # Check status
+pm2 logs qreditscan     # View logs
+pm2 restart qreditscan  # Restart
+pm2 stop qreditscan     # Stop
+pm2 delete qreditscan   # Remove
+
+# Auto-start on server reboot
+pm2 startup
+pm2 save
+```
+
 ### Docker (Optional)
 
 ```dockerfile
