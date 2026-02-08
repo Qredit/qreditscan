@@ -12,6 +12,14 @@ export function formatXQR(satoshi: string): string {
 }
 
 /**
+ * Format a satoshi value to whole XQR (no decimals).
+ */
+export function formatXQRWhole(satoshi: string): string {
+  const val = BigInt(satoshi) / BigInt(1e8);
+  return val.toLocaleString();
+}
+
+/**
  * Format a Unix timestamp to a relative time string.
  */
 export function timeAgo(unix: number): string {
@@ -23,8 +31,12 @@ export function timeAgo(unix: number): string {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 30) return `${days}d ago`;
-  const months = Math.floor(days / 30);
-  return `${months}mo ago`;
+  const totalMonths = Math.floor(days / 30);
+  if (totalMonths < 12) return `${totalMonths}mo ago`;
+  const years = Math.floor(totalMonths / 12);
+  const remainingMonths = totalMonths % 12;
+  if (remainingMonths === 0) return `${years}y ago`;
+  return `${years}y ${remainingMonths}mo ago`;
 }
 
 /**
@@ -50,7 +62,7 @@ export function truncateHash(hash: string, start = 8, end = 8): string {
 }
 
 /**
- * Get transaction type label from type number.
+ * Get transaction type label and badge class from type number.
  */
 export function getTxTypeLabel(type: number, typeGroup: number): string {
   if (typeGroup === 1) {
@@ -69,6 +81,25 @@ export function getTxTypeLabel(type: number, typeGroup: number): string {
     }
   }
   return `Type ${type}`;
+}
+
+export function getTxTypeBadgeClass(type: number, typeGroup: number): string {
+  if (typeGroup === 1) {
+    switch (type) {
+      case 0: return "badge-success";       // Transfer — green
+      case 2: return "badge-warning";       // Delegate Registration — amber
+      case 3: return "badge-primary";       // Vote — blue
+      case 7: return "badge-error";         // Delegate Resignation — red
+      case 6: return "badge-success";       // Multi Payment — green
+      case 1: return "badge-neutral";       // Second Signature — gray
+      case 4: return "badge-neutral";       // Multi Signature — gray
+      case 5: return "badge-primary";       // IPFS — blue
+      case 8: return "badge-warning";       // HTLC Lock — amber
+      case 9: return "badge-success";       // HTLC Claim — green
+      case 10: return "badge-error";        // HTLC Refund — red
+    }
+  }
+  return "badge-neutral";
 }
 
 /**

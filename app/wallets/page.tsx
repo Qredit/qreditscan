@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getWallets } from "@/lib/api";
-import { formatXQR, truncateHash } from "@/lib/utils";
+import { formatXQRWhole, truncateHash } from "@/lib/utils";
 import { Pagination } from "@/components/ui/Pagination";
 import { Wallet } from "lucide-react";
 
@@ -51,7 +51,7 @@ export default async function WalletsPage({
                     </Link>
                   </td>
                   <td className="table-cell text-right font-mono">
-                    {formatXQR(wallet.balance)} XQR
+                    {formatXQRWhole(wallet.balance)} XQR
                   </td>
                   <td className="table-cell text-center hidden sm:table-cell">
                     {wallet.isDelegate ? (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTransactions } from "@/lib/api";
-import { formatXQR, timeAgo, truncateHash, getTxTypeLabel } from "@/lib/utils";
+import { formatXQR, timeAgo, truncateHash, getTxTypeLabel, getTxTypeBadgeClass } from "@/lib/utils";
 import { Pagination } from "@/components/ui/Pagination";
 import { ArrowLeftRight } from "lucide-react";
 
@@ -36,6 +36,7 @@ export default async function TransactionsPage({
                 <th className="table-header hidden md:table-cell">From</th>
                 <th className="table-header hidden md:table-cell">To</th>
                 <th className="table-header text-right">Amount</th>
+                <th className="table-header hidden lg:table-cell">Memo</th>
                 <th className="table-header text-right hidden sm:table-cell">Fee</th>
                 <th className="table-header text-right">Time</th>
               </tr>
@@ -49,7 +50,7 @@ export default async function TransactionsPage({
                     </Link>
                   </td>
                   <td className="table-cell hidden sm:table-cell">
-                    <span className="badge-primary">{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
+                    <span className={getTxTypeBadgeClass(tx.type, tx.typeGroup)}>{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
                   </td>
                   <td className="table-cell hidden md:table-cell font-mono text-sm">
                     <Link href={`/wallets/${tx.sender}`} className="link">
@@ -66,6 +67,9 @@ export default async function TransactionsPage({
                     )}
                   </td>
                   <td className="table-cell text-right font-mono">{formatXQR(tx.amount)} XQR</td>
+                  <td className="table-cell hidden lg:table-cell text-sm text-secondary max-w-[200px] truncate">
+                    {tx.vendorField || <span className="text-muted">—</span>}
+                  </td>
                   <td className="table-cell text-right font-mono text-secondary hidden sm:table-cell">
                     {formatXQR(tx.fee)}
                   </td>

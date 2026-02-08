@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getBlock, getBlockTransactions } from "@/lib/api";
-import { formatXQR, formatDate, timeAgo, truncateHash, getTxTypeLabel } from "@/lib/utils";
+import { formatXQR, formatDate, timeAgo, truncateHash, getTxTypeLabel, getTxTypeBadgeClass } from "@/lib/utils";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { Boxes, ArrowLeft } from "lucide-react";
 
@@ -102,7 +102,7 @@ export default async function BlockDetailPage({
                       </Link>
                     </td>
                     <td className="table-cell hidden sm:table-cell">
-                      <span className="badge-primary">{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
+                      <span className={getTxTypeBadgeClass(tx.type, tx.typeGroup)}>{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
                     </td>
                     <td className="table-cell hidden md:table-cell font-mono text-sm">
                       <Link href={`/wallets/${tx.sender}`} className="link">

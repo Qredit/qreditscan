@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTransaction } from "@/lib/api";
-import { formatXQR, formatDate, timeAgo, getTxTypeLabel } from "@/lib/utils";
+import { formatXQR, formatDate, timeAgo, getTxTypeLabel, getTxTypeBadgeClass } from "@/lib/utils";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { ArrowLeftRight, ArrowLeft } from "lucide-react";
 
@@ -37,7 +37,7 @@ export default async function TransactionDetailPage({
             <div>
               <span className="text-xs text-muted uppercase tracking-wider">Type</span>
               <div className="mt-1">
-                <span className="badge-primary">{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
+                <span className={getTxTypeBadgeClass(tx.type, tx.typeGroup)}>{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
               </div>
             </div>
             <div>

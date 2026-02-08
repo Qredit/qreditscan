@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getBlockchain, getNodeStatus, getBlocks, getTransactions, getDelegates } from "@/lib/api";
-import { formatXQR, formatSupply, timeAgo, truncateHash, getTxTypeLabel } from "@/lib/utils";
+import { formatXQR, formatSupply, timeAgo, truncateHash, getTxTypeLabel, getTxTypeBadgeClass } from "@/lib/utils";
 import { Boxes, ArrowLeftRight, Vote, Activity, Database, Clock } from "lucide-react";
 
 export const revalidate = 8;
@@ -141,7 +141,7 @@ export default async function Dashboard() {
                       </Link>
                     </td>
                     <td className="table-cell hidden sm:table-cell">
-                      <span className="badge-primary">{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
+                      <span className={getTxTypeBadgeClass(tx.type, tx.typeGroup)}>{getTxTypeLabel(tx.type, tx.typeGroup)}</span>
                     </td>
                     <td className="table-cell text-right text-sm font-mono">
                       {formatXQR(tx.amount)} XQR

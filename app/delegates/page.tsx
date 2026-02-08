@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { getDelegates } from "@/lib/api";
-import { formatXQR, timeAgo } from "@/lib/utils";
+import { formatXQRWhole, timeAgo } from "@/lib/utils";
 import { Vote, CheckCircle, XCircle } from "lucide-react";
 
-export const revalidate = 30;
+export const revalidate = 8;
 
 export default async function DelegatesPage() {
   const [page1, page2] = await Promise.all([
@@ -12,8 +12,12 @@ export default async function DelegatesPage() {
   ]);
   const delegates = [...page1.data, ...page2.data];
 
+  const nowUnix = Math.floor(Date.now() / 1000);
+  const OFFLINE_THRESHOLD = 15 * 60; // 15 minutes in seconds
+
   const active = delegates.filter((d) => d.rank <= 51 && !d.isResigned);
   const standby = delegates.filter((d) => d.rank > 51 || d.isResigned);
+  const onlineCount = active.filter((d) => d.blocks.last && (nowUnix - d.blocks.last.timestamp.unix) < OFFLINE_THRESHOLD).length;
 
   return (
     <div className="space-y-6">
@@ -27,10 +31,20 @@ export default async function DelegatesPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <div className="stat-tile">
           <div className="stat-label">Active</div>
           <div className="stat-value text-success">{active.length}</div>
+        </div>
+        <div className="stat-tile">
+          <div className="stat-label">Online</div>
+          <div className="stat-value text-success">{onlineCount}</div>
+          <div className="stat-sub">of {active.length} active</div>
+        </div>
+        <div className="stat-tile">
+          <div className="stat-label">Offline</div>
+          <div className="stat-value text-error">{active.length - onlineCount}</div>
+          <div className="stat-sub">no block in 15m</div>
         </div>
         <div className="stat-tile">
           <div className="stat-label">Standby</div>
@@ -39,10 +53,6 @@ export default async function DelegatesPage() {
         <div className="stat-tile">
           <div className="stat-label">Resigned</div>
           <div className="stat-value text-error">{delegates.filter((d) => d.isResigned).length}</div>
-        </div>
-        <div className="stat-tile">
-          <div className="stat-label">Total Registered</div>
-          <div className="stat-value">{delegates.length}</div>
         </div>
       </div>
 
@@ -58,6 +68,7 @@ export default async function DelegatesPage() {
             <thead className="bg-dark-hover/30">
               <tr>
                 <th className="table-header w-16">Rank</th>
+                <th className="table-header text-center w-16">Status</th>
                 <th className="table-header">Username</th>
                 <th className="table-header text-right hidden sm:table-cell">Votes</th>
                 <th className="table-header text-right hidden md:table-cell">Approval</th>
@@ -67,10 +78,23 @@ export default async function DelegatesPage() {
               </tr>
             </thead>
             <tbody>
-              {active.map((d) => (
+              {active.map((d) => {
+                const isOnline = d.blocks.last && (nowUnix - d.blocks.last.timestamp.unix) < OFFLINE_THRESHOLD;
+                return (
                 <tr key={d.address} className="hover:bg-dark-hover/30 transition-colors">
                   <td className="table-cell font-mono text-sm text-center">
                     <span className="badge-primary">{d.rank}</span>
+                  </td>
+                  <td className="table-cell text-center">
+                    {isOnline ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-success" title="Online — forged within 15 minutes">
+                        <span className="status-dot-success" /> Online
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-error" title="Offline — no block in 15+ minutes">
+                        <span className="status-dot-error" /> Offline
+                      </span>
+                    )}
                   </td>
                   <td className="table-cell">
                     <Link href={`/wallets/${d.address}`} className="link font-medium">
@@ -78,7 +102,7 @@ export default async function DelegatesPage() {
                     </Link>
                   </td>
                   <td className="table-cell text-right font-mono text-sm hidden sm:table-cell">
-                    {formatXQR(d.votes)}
+                    {formatXQRWhole(d.votes)}
                   </td>
                   <td className="table-cell text-right hidden md:table-cell">
                     <span className="text-sm">{d.production.approval.toFixed(2)}%</span>
@@ -87,13 +111,14 @@ export default async function DelegatesPage() {
                     {d.blocks.produced.toLocaleString()}
                   </td>
                   <td className="table-cell text-right font-mono text-sm hidden lg:table-cell">
-                    {formatXQR(d.forged.total)} XQR
+                    {formatXQRWhole(d.forged.total)} XQR
                   </td>
                   <td className="table-cell text-right text-secondary text-sm hidden sm:table-cell">
                     {d.blocks.last ? timeAgo(d.blocks.last.timestamp.unix) : "—"}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -128,7 +153,7 @@ export default async function DelegatesPage() {
                       </Link>
                     </td>
                     <td className="table-cell text-right font-mono text-sm text-secondary hidden sm:table-cell">
-                      {formatXQR(d.votes)}
+                      {formatXQRWhole(d.votes)}
                     </td>
                     <td className="table-cell text-center hidden sm:table-cell">
                       {d.isResigned ? (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getWallet, getWalletTransactions } from "@/lib/api";
-import { formatXQR, formatDate, timeAgo, truncateHash, getTxTypeLabel } from "@/lib/utils";
+import { formatXQR, formatXQRWhole, formatDate, timeAgo, truncateHash, getTxTypeLabel } from "@/lib/utils";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { Pagination } from "@/components/ui/Pagination";
 import { Wallet, ArrowLeft } from "lucide-react";
@@ -55,7 +55,7 @@ export default async function WalletDetailPage({
             )}
             <div>
               <span className="text-xs text-muted uppercase tracking-wider">Balance</span>
-              <div className="text-xl font-semibold mt-1 font-mono">{formatXQR(wallet.balance)} XQR</div>
+              <div className="text-xl font-semibold mt-1 font-mono">{formatXQRWhole(wallet.balance)} XQR</div>
             </div>
             <div>
               <span className="text-xs text-muted uppercase tracking-wider">Nonce</span>
@@ -100,13 +100,14 @@ export default async function WalletDetailPage({
                 <th className="table-header hidden md:table-cell">From</th>
                 <th className="table-header hidden md:table-cell">To</th>
                 <th className="table-header text-right">Amount</th>
+                <th className="table-header hidden lg:table-cell">Memo</th>
                 <th className="table-header text-right">Time</th>
               </tr>
             </thead>
             <tbody>
               {transactions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="table-cell text-center text-muted py-8">
+                  <td colSpan={7} className="table-cell text-center text-muted py-8">
                     No transactions found
                   </td>
                 </tr>
@@ -145,6 +146,9 @@ export default async function WalletDetailPage({
                       </td>
                       <td className={`table-cell text-right font-mono ${isIncoming ? "text-success" : "text-white"}`}>
                         {isIncoming ? "+" : "-"}{formatXQR(tx.amount)} XQR
+                      </td>
+                      <td className="table-cell hidden lg:table-cell text-sm text-secondary max-w-[200px] truncate">
+                        {tx.vendorField || <span className="text-muted">—</span>}
                       </td>
                       <td className="table-cell text-right text-secondary text-sm">
                         {timeAgo(tx.timestamp.unix)}
