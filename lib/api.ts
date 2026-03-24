@@ -139,9 +139,13 @@ export interface NodeStatus {
 
 async function apiFetch<T>(path: string, revalidate = 8): Promise<T> {
   const url = `${API_BASE}${path}`;
-  const res = await fetch(url, { next: { revalidate } });
-  if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
-  return res.json();
+  try {
+    const res = await fetch(url, { next: { revalidate } });
+    if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
+    return res.json();
+  } catch (error) {
+    throw new Error(`Failed to fetch ${path}: ${error instanceof Error ? error.message : "Unknown error"}`);
+  }
 }
 
 export async function getBlockchain(): Promise<BlockchainInfo> {
