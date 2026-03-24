@@ -97,7 +97,7 @@ CMD ["node", "server.js"]
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_API_URL` | `http://78.47.141.58:5103/api/v2` | Qredit node API endpoint |
+| `NEXT_PUBLIC_API_URL` | `http://116.203.70.214:5103/api/v2` | Qredit node API endpoint |
 | `PORT` | `3000` | Server port |
 
 To use your own Qredit node, set `NEXT_PUBLIC_API_URL` to your node's API URL:

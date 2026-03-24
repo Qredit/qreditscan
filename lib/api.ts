@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://78.47.141.58:5103/api/v2";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://116.203.70.214:5103/api/v2";
 
 interface PaginatedResponse<T> {
   meta: {
